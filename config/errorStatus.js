@@ -117,4 +117,19 @@ export const errStatus = {
     code: 'COMMENT500',
     message: '댓글 삭제 중 오류가 발생했습니다.',
   },
+
+  USER_NOT_FOUND: {
+    status: StatusCodes.NOT_FOUND,
+    isSuccess: false,
+    code: 'USER404',
+    message: '사용자를 찾을 수 없습니다.',
+  },
+  
+  UPDATE_PROFILE_FAILED: {
+    status: StatusCodes.INTERNAL_SERVER_ERROR,
+    isSuccess: false,
+    code: 'UPDATE500',
+    message: '프로필 업데이트 중 오류가 발생했습니다.',
+  },
+
 };

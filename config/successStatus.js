@@ -128,4 +128,26 @@ export const successStatus = {
     code: 'COMMENT200',
     message: '댓글 삭제 성공했습니다!',
   },
+
+  GET_USER_PROFILE_SUCCESS: {
+    status: StatusCodes.OK,
+    isSuccess: true,
+    code: 'USER200',
+    message: '사용자 프로필 조회 성공',
+  },
+
+  UPDATE_USER_PROFILE_SUCCESS: {
+    status: StatusCodes.OK,
+    isSuccess: true,
+    code: 'UPDATE200',
+    message: '프로필 업데이트 성공!',
+  },
+
+  WITHDRAW_SUCCESS: {
+    status: StatusCodes.OK,
+    isSuccess: true,
+    code: 'WITHDRAW200',
+    message: '회원탈퇴에 성공했습니다!',
+  },
+
 };

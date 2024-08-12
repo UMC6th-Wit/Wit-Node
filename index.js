@@ -2,6 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import cors from 'cors';
 
+import mypageRouter from './routes/mypageRouter.js'
 import SwaggerUi from 'swagger-ui-express';
 
 dotenv.config();
@@ -12,6 +13,8 @@ app.set('port', process.env.PORT || 3000);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use('/api/mypage', mypageRouter);
 
 // app.use('/api-docs', SwaggerUi.serve, SwaggerUi.setup(specs));
 
