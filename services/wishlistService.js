@@ -147,3 +147,48 @@ export const deleteFoldersFromDb = async (userId, folderIds) => {
         throw error;
     }
 };
+
+export const getProductsInFolderFromDb = async (folderId) => {
+    try {
+        // 폴더 내 상품 정보를 조회하는 SQL 쿼리
+        const [products] = await pool.query(`
+            SELECT p.id AS product_id, p.name, p.en_price, p.won_price, p.image, p.manufacturing_country
+            FROM product p
+            JOIN cart_folder_product cfp ON p.id = cfp.product_id
+            WHERE cfp.folder_id = ?
+        `, [folderId]);
+
+        return {
+            count: products.length,
+            products
+        };
+    } catch (error) {
+        console.error('Error retrieving products in folder', error);
+        throw error;
+    }
+};
+
+export const deleteProductsFromFolder = async (folderId, productIds) => {
+    try {
+        if (!Array.isArray(productIds) || productIds.length === 0) {
+            throw new Error('productIds must be a non-empty array');
+        }
+
+        // 배열을 SQL 쿼리에서 사용할 수 있는 형태로 변환
+        const placeholders = productIds.map(() => '?').join(',');
+        const query = `
+            DELETE FROM cart_folder_product
+            WHERE folder_id = ? AND product_id IN (${placeholders})
+        `;
+        
+        // 쿼리 실행
+        await pool.query(query, [folderId, ...productIds]);
+        
+        return {
+            message: 'Products deleted successfully',
+        };
+    } catch (error) {
+        console.error('Error deleting products from folder', error);
+        throw error;
+    }
+};
