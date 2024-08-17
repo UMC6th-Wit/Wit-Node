@@ -14,19 +14,11 @@ export const successStatus = {
     code: 'TOKEN200',
     message: 'JWT 토큰 검증 성공',
   },
-
   SIGNUP_SUCCESS: {
     status: StatusCodes.OK,
     isSuccess: true,
     code: 'MEMBER200',
     message: '회원가입 성공입니다.',
-  },
-
-  TOKEN_REFRESH_SUCCESS: {
-    status: StatusCodes.OK,
-    isSuccess: true,
-    code: 'TOKEN 200',
-    message: 'ACCESS TOKEN 재발급 성공입니다.',
   },
   // 로그인
   KAKAO_LOGIN_PAGE_SUCCESS: {
@@ -35,26 +27,23 @@ export const successStatus = {
     code: 'LOGIN200',
     message: '카카오 로그인 페이지 불러오기에 성공했습니다!',
   },
-
   NAVER_LOGIN_PAGE_SUCCESS: {
     status: StatusCodes.OK,
     isSuccess: true,
     code: 'LOGIN200',
     message: '네이버 로그인 페이지 불러오기에 성공했습니다!',
   },
-
   KAKAO_LOGIN_SUCCESS: {
     status: StatusCodes.OK,
     isSuccess: true,
     code: 'LOGIN200',
     message: '카카오 로그인 성공했습니다!',
   },
-
   NAVER_LOGIN_SUCCESS: {
     status: StatusCodes.OK,
     isSuccess: true,
     code: 'LOGIN200',
-    message: '네이버 로그인에 성공했습니다!',
+    message: '네이버 로그인 성공했습니다!',
   },
   LOGIN_SUCCESS: {
     status: StatusCodes.OK,
@@ -74,37 +63,6 @@ export const successStatus = {
     isSuccess: true,
     code: 'WITHDRAW200',
     message: '회원탈퇴에 성공했습니다!',
-  },
-
-  GET_ALL_USERS_SUCCESS: {
-    status: StatusCodes.OK,
-    isSuccess: true,
-    code: 'USER200',
-    message: '유저 전체 정보 조회에 성공했습니다!',
-  },
-  GET_ONE_USER_SUCCESS: {
-    status: StatusCodes.OK,
-    isSuccess: true,
-    code: 'USER200',
-    message: '유저 정보 조회에 성공했습니다!',
-  },
-  UPDATE_USER_SUCCESS: {
-    status: StatusCodes.OK,
-    isSuccess: true,
-    code: 'USER200',
-    message: '유저 정보 수정에 성공했습니다!',
-  },
-  UPLOAD_PROFILE_IMAGE_SUCCESS: {
-    status: StatusCodes.OK,
-    isSuccess: true,
-    code: 'USER200',
-    message: '유저 프로필 이미지 업로드에 성공했습니다!',
-  },
-  GET_PROFILE_IMAGE_SUCCESS: {
-    status: StatusCodes.OK,
-    isSuccess: true,
-    code: 'USER200',
-    message: '유저 프로필 이미지 조회에 성공했습니다!',
   },
 
   // 랜딩 페이지
@@ -171,36 +129,47 @@ export const successStatus = {
     message: '댓글 삭제 성공했습니다!',
   },
 
-  // 상품 조회 성공
-  PRODUCTS_SEARCH_SUCCESS: {
+  GET_USER_PROFILE_SUCCESS: {
     status: StatusCodes.OK,
     isSuccess: true,
-    code: 'SEARCHES200',
-    message: '기념품 검색에 성공했습니다.',
+    code: 'USER200',
+    message: '사용자 프로필 조회 성공',
   },
 
-  // 유저 최근 검색어 코드 조회 성공
-  RECENT_SEARCHES_SUCCESS: {
-    status: StatusCodes.OK,
-    isSuccess:true,
-    code: 'RECENT_SEARCHES200',
-    message: '최근 검색어 조회에 성공했습니다.',
-  },
-
-  // 인기 검색어 조회 성공
-  POPULAR_SEARCHES_SUCCESS: {
+  UPDATE_USER_PROFILE_SUCCESS: {
     status: StatusCodes.OK,
     isSuccess: true,
-    code: 'POPULAR_SEARCHES200',
-    message: '인기 검색어 조회에 성공했습니다.',
+    code: 'UPDATE200',
+    message: '프로필 업데이트 성공!',
   },
 
-  // 온보딩 성공
-  ONBOARDING_SUCCESS: {
+  WITHDRAW_SUCCESS: {
     status: StatusCodes.OK,
     isSuccess: true,
-    code: 'ONBOARDING_SUCCESS200',
-    message: '온보딩 정보가 성공적으로 저장되었습니다.',
-  }
+    code: 'WITHDRAW200',
+    message: '회원탈퇴에 성공했습니다!',
+  },
 
+  ISSUCCESS: {
+    status: StatusCodes.OK,
+    isSuccess: true,
+    code: '2000',
+    message: 'success!',
+  },
+  // Wishlist API
+  CART_ADD_SUCCESS: {
+    status: StatusCodes.CREATED,
+    isSuccess: true,
+    code: 'WISHLIST201',
+    message: '상품이 장바구니에 성공적으로 추가되었습니다.',
+  },
+  GET_WISHLIST_SUCCESS: {
+    status: StatusCodes.OK,
+    isSuccess: true,
+    code: 'WISHLIST200',
+    message: '장바구니 상품 목록을 성공적으로 조회했습니다.',
+  },
 };
+
+
+
