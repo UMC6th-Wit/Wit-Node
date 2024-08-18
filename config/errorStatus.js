@@ -51,6 +51,43 @@ export const errStatus = {
     code: 'MEMBER002',
     message: '이미 가입하였습니다.',
   },
+<<<<<<< HEAD
+=======
+
+  USER_ID_IS_WRONG: {
+    status: StatusCodes.BAD_REQUEST,
+    isSuccess: false,
+    code: 'COMMON005',
+    message: '유저 id가 잘못됐습니다.',
+  },
+
+  USER_PRIVATE_KEY_IS_WRONG: {
+    status: StatusCodes.BAD_REQUEST,
+    isSuccess: false,
+    code: 'COMMON005',
+    message: '유저 private key가 잘못됐습니다.',
+  },
+
+  INVALID_USER_DATA: {
+    status: StatusCodes.BAD_REQUEST,
+    isSuccess: false,
+    code: 'USER 400',
+    message: '유저 데이터가 잘못됐습니다.',
+  },
+
+  UPLOAD_PROFILE_IMAGE_FAIL: {
+    status: StatusCodes.BAD_REQUEST,
+    isSuccess: false,
+    code: 'USER 400',
+    message: '유저 프로필 이미지 업로드에 실패했습니다.',
+  },
+  GET_PROFILE_IMAGE_FAIL: {
+    status: StatusCodes.BAD_REQUEST,
+    isSuccess: false,
+    code: 'USER 400',
+    message: '유저 프로필 이미지 조회에 실패했습니다.',
+  },
+>>>>>>> dev
 
   // 로그인 에러
   INVALID_CREDENTIALS: {
@@ -124,8 +161,13 @@ export const errStatus = {
     code: 'USER404',
     message: '사용자를 찾을 수 없습니다.',
   },
+<<<<<<< HEAD
   
   UPDATE_PROFILE_FAILED: {
+=======
+  // 유저 최근 검색어 조회 실패
+  RECENT_SEARCHES_FAILED: {
+>>>>>>> dev
     status: StatusCodes.INTERNAL_SERVER_ERROR,
     isSuccess: false,
     code: 'UPDATE500',
@@ -139,4 +181,14 @@ export const errStatus = {
     message: '장바구니에 상품이 없습니다.',
   },
 
+<<<<<<< HEAD
+=======
+  // 온보딩 실패
+  ONBOARDING_FAILED: {
+    status: StatusCodes.INTERNAL_SERVER_ERROR,
+    isSuccess: false,
+    code: 'ONBOARDING_FAILED500',
+    message: '온보딩 저장에 실패했습니다.',
+  },
+>>>>>>> dev
 };
