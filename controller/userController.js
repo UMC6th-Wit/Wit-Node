@@ -11,7 +11,6 @@ import { imageUploader } from '../middleware/imageUploader.js';
 
 const getAllUserController = async (req, res) => {
   try {
-    console.log(req.user_id);
     const data = await getAllUser();
     res.send(response(successStatus.GET_ALL_USERS_SUCCESS, data));
   } catch (err) {
@@ -21,8 +20,7 @@ const getAllUserController = async (req, res) => {
 
 const getOneUserController = async (req, res) => {
   try {
-    const { user_id } = req;
-    console.log(user_id);
+    const { user_id } = req.params;
     const data = await getOneUser(user_id);
     // 회원없을시 오류 전달
     if (data === null) {
@@ -36,7 +34,7 @@ const getOneUserController = async (req, res) => {
 
 const updateUserController = async (req, res) => {
   try {
-    const { user_id } = req;
+    const { user_id } = req.params;
     const userData = req.body;
     const data = await updateUser(userData, user_id);
     res.send(response(successStatus.UPDATE_USER_SUCCESS, data));
@@ -47,7 +45,7 @@ const updateUserController = async (req, res) => {
 
 const deleteUserController = async (req, res) => {
   try {
-    const { user_id } = req;
+    const { user_id } = req.params;
     await deleteUser(user_id);
     res.send(response(successStatus.WITHDRAW_SUCCESS, null));
   } catch (err) {
@@ -60,7 +58,7 @@ const updateProfileImage = [
   (req, res) => {
     try {
       // 업로드가 성공적으로 완료된 경우
-      const { user_id } = req;
+      const { user_id } = req.params;
       const file = req.file;
       const image = {
         originalName: file.originalname,
@@ -80,7 +78,7 @@ const getProfileImage = async (req, res) => {
   try {
     const baseUrl =
       'https://wit-bucket-1.s3.ap-northeast-2.amazonaws.com/user-profile-image';
-    const { user_id } = req;
+    const { user_id } = req.params;
     const imageUrl = `${baseUrl}/${user_id}`;
     res.send(response(successStatus.GET_PROFILE_IMAGE_SUCCESS, imageUrl));
   } catch (err) {

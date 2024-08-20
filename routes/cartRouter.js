@@ -5,5 +5,5 @@ const router = Router();
 
 
 router.post('/:productId', addToCart);
-router.delete('/:productId', removeToCart);
+router.post('/delete-cart-product/:productId', removeToCart);
 export default router;

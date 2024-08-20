@@ -2,7 +2,7 @@ import express from 'express';
 import passport from 'passport';
 import { response } from '../config/response.js';
 import { successStatus } from '../config/successStatus.js';
-import { getRecentSearches } from '../models/searchesDao.js';
+
 import {
   getAllUserController,
   getOneUserController,
@@ -13,11 +13,9 @@ import {
 } from '../controller/userController.js';
 
 import {
-  decodeAccessToken,
+  authenticateJWT,
   logout,
   refreshAccessToken,
-  verifyAccessToken,
-  verifyRefreshToken,
 } from '../middleware/jwtMiddleware.js';
 
 export const userRouter = express.Router();
@@ -37,6 +35,8 @@ userRouter.get(
     req.session.accessToken = accessToken;
     const data = { user_id, accessToken, refreshToken };
     const dataObj = response(successStatus.NAVER_LOGIN_SUCCESS, data);
+    // 헤더로 전송하는 로직도 있다
+    // 정적 페이지 설정
     res.send(`
       <!DOCTYPE html>
       <html lang="en">
@@ -86,44 +86,27 @@ userRouter.get(
   }
 );
 
-userRouter.get('/logout', decodeAccessToken, logout);
+userRouter.get('/logout/:user_id', logout);
 
 // 회원 정보 모두 조회 (이미지 제외)
-userRouter.route('/all').get(decodeAccessToken, getAllUserController);
+userRouter.route('/').get(getAllUserController);
 
 // 회원 탈퇴
-userRouter.delete('/withdraw', decodeAccessToken, deleteUserController);
+userRouter.delete('/withdraw/:user_id', deleteUserController);
 
 userRouter.post('/refresh_token', refreshAccessToken);
 
 userRouter
-  .route('/')
+  .route('/:user_id')
   // 회원 정보 조회 (이미지 제외)
-  .get(decodeAccessToken, getOneUserController)
+  .get(getOneUserController)
   // 회원 정보 수정 (이미지 제외)
-  .post(decodeAccessToken, updateUserController);
+  .post(updateUserController);
 
 // 회원 프로필 이미지 관련 라우터
 userRouter
-  .route('/profile_image')
+  .route('/profile_image/:user_id')
   // 회원 프로필 이미지 조회
-  .get(decodeAccessToken, getProfileImage)
+  .get(getProfileImage)
   // 회원 프로필 이미지 수정, 업로드
-  .post(decodeAccessToken, updateProfileImage);
-
-userRouter.post('/check_access', verifyAccessToken);
-
-userRouter.post('/check_refresh', verifyRefreshToken);
-
-// 개인 최근 검색어 확인 하경님이 수정해주세요
-userRouter.get('/:userId/recent-searches', async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const keywords = await getRecentSearches(userId);
-    res.send(response(successStatus.RECENT_SEARCHES_SUCCESS, keywords));
-  } catch (err) {
-    console.log(err);
-    res.send(errResponse(errStatus.RECENT_SEARCHES_FAILED));
-  }
-});
+  .post(updateProfileImage);

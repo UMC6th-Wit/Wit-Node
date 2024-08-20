@@ -119,13 +119,14 @@ export const deleteFolders = async (req, res) => {
 // 폴더 내 상품 정보 조회
 export const getProductsInFolder = async (req, res) => {
     try {
-        const { folder_id } = req.params;
+        const { folder_id, user_id } = req.params; // 요청 파라미터에서 folder_id와 user_id를 받아옴
 
-        if (!folder_id) {
-            return res.status(400).json({ message: 'folder_id is required' });
+        if (!folder_id || !user_id) {
+            return res.status(400).json({ message: 'folder_id and user_id are required' });
         }
 
-        const result = await getProductsInFolderFromDb(folder_id);
+        // 폴더 내 상품 정보를 조회
+        const result = await getProductsInFolderFromDb(folder_id, user_id);
 
         res.status(200).json({
             message: 'Products retrieved successfully',
@@ -135,6 +136,7 @@ export const getProductsInFolder = async (req, res) => {
         res.status(500).json({ message: 'Error retrieving products in folder', error: error.message });
     }
 };
+
 
 // 폴더 내 상품 삭제
 export const deleteProductsFromFolderController = async (req, res) => {
