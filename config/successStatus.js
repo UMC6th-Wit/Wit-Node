@@ -251,9 +251,8 @@ export const successStatus = {
     isSuccess: true,
     code: 'DELETE_ONE_RECENT_SEARCHES_SUCCESS',
     message: '최근 검색어가 성공적으로 삭제되었습니다.',
-  }
+  },
 
-    // 리뷰 목록 불러오기 성공
     REVIEWS_RETRIEVED_SUCCESS: {
       status: StatusCodes.OK,  // 200 상태 코드
       isSuccess: true,  // 성공 여부
