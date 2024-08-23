@@ -135,8 +135,7 @@ router.get('/:productId/reviews/overview', decodeAccessToken, async (req, res) =
         isSuccess: true,
         code: 200,
         message: 'Review overview retrieved successfully',
-      },
-      {
+
         review_count: reviewCount,
         average_rating: averageRating,
         latest_images: latestImages,
@@ -147,95 +146,6 @@ router.get('/:productId/reviews/overview', decodeAccessToken, async (req, res) =
     return res.status(200).json(responseData);
   } catch (err) {
     console.error(err);
-    return res.status(500).json({
-      isSuccess: false,
-      code: 500,
-      message: '리뷰 목록 불러오기 중 오류가 발생했습니다.',
-    });
-  }
-});
-
-// 제품 리뷰 목록 불러오기 (베스트순, 최신순), 커서 페이지네이션 구현
-router.get('/:productId/reviews', decodeAccessToken, async (req, res, next) => {
-  const { productId } = req.params;
-  const { cursor = 0, sort = 'latest', limit = 10 } = req.query;
-  const { user_id } = req; // 디코딩된 토큰에서 user_id 사용
-
-  try {
-    let whereClause = 'WHERE r.product_id = ?';
-    const params = [productId];
-
-    if (cursor) {
-      if (sort === 'best') {
-        whereClause += ` AND (
-                            (SELECT COUNT(*) FROM review_helpful rh WHERE rh.review_id = r.id) < 
-                            (SELECT COUNT(*) FROM review_helpful rh WHERE rh.review_id = ?) 
-                            OR 
-                            ((SELECT COUNT(*) FROM review_helpful rh WHERE rh.review_id = r.id) = 
-                            (SELECT COUNT(*) FROM review_helpful rh WHERE rh.review_id = ?) AND r.id < ?)
-                         )`;
-        params.push(cursor, cursor, cursor);
-      } else if (sort === 'latest') {
-        whereClause += ` AND (
-                            r.created_at < (SELECT created_at FROM review WHERE id = ?) 
-                            OR 
-                            (r.created_at = (SELECT created_at FROM review WHERE id = ?) AND r.id < ?)
-                         )`;
-        params.push(cursor, cursor, cursor);
-      }
-    }
-
-    let orderClause = '';
-    if (sort === 'best') {
-      orderClause = 'ORDER BY helpful_count DESC, r.id DESC';
-    } else {
-      orderClause = 'ORDER BY r.created_at DESC, r.id DESC';
-    }
-
-    const reviewQuery = `
-      SELECT r.id AS review_id, r.rating, r.content, r.created_at, u.username AS user_name, u.userprofile AS user_profile_image, r.image AS images,
-             (SELECT COUNT(*) FROM review_helpful rh WHERE rh.review_id = r.id) AS helpful_count,  
-             (SELECT 1 FROM review_helpful rh WHERE rh.review_id = r.id AND rh.user_id = ?) AS user_helped  
-      FROM review r
-      JOIN user u ON r.user_id = u.user_id
-      ${whereClause}
-      ${orderClause}
-      LIMIT ?
-    `;
-
-    params.push(parseInt(limit, 10));
-    const [reviews] = await pool.query(reviewQuery, [user_id, ...params]);
-
-    if (reviews.length === 0) {
-      return res.status(200).json(response(successStatus.REVIEWS_RETRIEVED, {
-        reviews: [],
-        average_rating: 0,
-        total_reviews: 0,
-        nextCursor: null,
-      }));
-    }
-
-    const nextCursor = reviews.length === parseInt(limit, 10) ? reviews[reviews.length - 1].review_id : null;
-
-    const averageRatingQuery =
-      'SELECT AVG(rating) as average_rating FROM review WHERE product_id = ?';
-    const [averageRatingResult] = await pool.query(averageRatingQuery, [productId]);
-    const averageRating = averageRatingResult[0].average_rating || 0;
-
-    const totalReviewsQuery =
-      'SELECT COUNT(*) as total_reviews FROM review WHERE product_id = ?';
-    const [totalReviewsResult] = await pool.query(totalReviewsQuery, [productId]);
-    const totalReviews = totalReviewsResult[0].total_reviews || 0;
-
-    return res.status(200).json(response(successStatus.REVIEWS_RETRIEVED, {
-      reviews,
-      average_rating: averageRating,
-      total_reviews: totalReviews,
-      nextCursor,
-    }));
-
-  } catch (err) {
-    console.log(err);
     return res.status(500).json({
       isSuccess: false,
       code: 500,
