@@ -135,7 +135,8 @@ router.get('/:productId/reviews/overview', decodeAccessToken, async (req, res) =
         isSuccess: true,
         code: 200,
         message: 'Review overview retrieved successfully',
-
+      },
+      {
         review_count: reviewCount,
         average_rating: averageRating,
         latest_images: latestImages,
@@ -170,17 +171,19 @@ router.get('/:productId/reviews', decodeAccessToken, async (req, res, next) => {
 
     // Row numbering query
     const reviewQuery = `
-      SELECT r.id AS review_id, r.rating, r.content, r.created_at, u.username AS user_name, u.userprofile AS user_profile_image, r.image AS images,
-             (SELECT COUNT(*) FROM review_helpful rh WHERE rh.review_id = r.id) AS helpful_count,
-             (SELECT 1 FROM review_helpful rh WHERE rh.review_id = r.id AND rh.user_id = ?) AS user_helped,
-             ROW_NUMBER() OVER (${orderClause}) AS row_num
-      FROM review r
-      JOIN user u ON r.user_id = u.user_id
-      WHERE r.product_id = ?
-      HAVING row_num > ?
-      ${orderClause}
-      LIMIT ?
-    `;
+    SELECT * FROM (
+        SELECT r.id AS review_id, r.rating, r.content, r.created_at, u.username AS user_name, u.userprofile AS user_profile_image, r.image AS images,
+               (SELECT COUNT(*) FROM review_helpful rh WHERE rh.review_id = r.id) AS helpful_count,
+               (SELECT 1 FROM review_helpful rh WHERE rh.review_id = r.id AND rh.user_id = ?) AS user_helped,
+               ROW_NUMBER() OVER (${orderClause}) AS row_num
+        FROM review r
+        JOIN user u ON r.user_id = u.user_id
+        WHERE r.product_id = ?
+        ${orderClause}
+    ) AS subquery
+    WHERE subquery.row_num > ?
+    LIMIT ?
+`;
 
     const params = [user_id, productId, parseInt(cursor, 10), parseInt(limit, 10)];
     const [reviews] = await pool.query(reviewQuery, params);
