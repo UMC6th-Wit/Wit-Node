@@ -244,6 +244,75 @@ router.get('/:productId/reviews', decodeAccessToken, async (req, res, next) => {
   }
 });
 
+// 제품 리뷰 목록 불러오기 (베스트순, 최신순), 커서 페이지네이션 구현
+router.get('/:productId/reviews', decodeAccessToken, async (req, res, next) => {
+  const { productId } = req.params;
+  const { cursor = 0, sort = 'latest', limit = 10 } = req.query;
+  const { user_id } = req; // 디코딩된 토큰에서 user_id 사용
+
+  try {
+    let orderClause = '';
+    if (sort === 'best') {
+      orderClause = 'ORDER BY helpful_count DESC, r.id DESC';
+    } else {
+      orderClause = 'ORDER BY r.created_at DESC, r.id DESC';
+    }
+
+    // Row numbering query
+    const reviewQuery = `
+      SELECT r.id AS review_id, r.rating, r.content, r.created_at, u.username AS user_name, u.userprofile AS user_profile_image, r.image AS images,
+             (SELECT COUNT(*) FROM review_helpful rh WHERE rh.review_id = r.id) AS helpful_count,
+             (SELECT 1 FROM review_helpful rh WHERE rh.review_id = r.id AND rh.user_id = ?) AS user_helped,
+             ROW_NUMBER() OVER (${orderClause}) AS row_num
+      FROM review r
+      JOIN user u ON r.user_id = u.user_id
+      WHERE r.product_id = ?
+      HAVING row_num > ?
+      ${orderClause}
+      LIMIT ?
+    `;
+
+    const params = [user_id, productId, parseInt(cursor, 10), parseInt(limit, 10)];
+    const [reviews] = await pool.query(reviewQuery, params);
+
+    if (reviews.length === 0) {
+      return res.status(200).json(response(successStatus.REVIEWS_RETRIEVED, {
+        reviews: [],
+        average_rating: 0,
+        total_reviews: 0,
+        nextCursor: null,
+      }));
+    }
+
+    // Return next row_num as nextCursor
+    const nextCursor = reviews.length === parseInt(limit, 10) ? reviews[reviews.length - 1].row_num : null;
+
+    const averageRatingQuery =
+      'SELECT AVG(rating) as average_rating FROM review WHERE product_id = ?';
+    const [averageRatingResult] = await pool.query(averageRatingQuery, [productId]);
+    const averageRating = averageRatingResult[0].average_rating || 0;
+
+    const totalReviewsQuery =
+      'SELECT COUNT(*) as total_reviews FROM review WHERE product_id = ?';
+    const [totalReviewsResult] = await pool.query(totalReviewsQuery, [productId]);
+    const totalReviews = totalReviewsResult[0].total_reviews || 0;
+
+    return res.status(200).json(response(successStatus.REVIEWS_RETRIEVED, {
+      reviews,
+      average_rating: averageRating,
+      total_reviews: totalReviews,
+      nextCursor,
+    }));
+
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({
+      isSuccess: false,
+      code: 500,
+      message: '리뷰 목록 불러오기 중 오류가 발생했습니다.',
+    });
+  }
+});
 
 // 리뷰 작성하기 -> 이미지 업로드 통합
 router.post('/:productId/reviews', decodeAccessToken, imageUploader.single('image'), async (req, res, next) => {
